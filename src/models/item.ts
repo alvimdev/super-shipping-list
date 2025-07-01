@@ -1,9 +1,10 @@
 import { prisma } from "@/src/lib/prisma";
 
-export async function createItem(listId: string, data: { name: string; quantity?: number }) {
+export async function createItem(listId: string, data: { name: string; quantity: number }) {
   return prisma.item.create({
     data: {
       ...data,
+      completed: false,
       list: {
         connect: { id: listId },
       },
