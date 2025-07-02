@@ -6,7 +6,6 @@ const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key";
 type JwtPayload = {
   sub: string; // userId
   email: string;
-  admin?: boolean; // opcional, se for admin
 };
 
 export function generateToken(payload: JwtPayload) {

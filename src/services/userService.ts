@@ -41,24 +41,25 @@ export async function findUserByEmail(email: string) {
 
 export async function modifyUser(
   id: string,
-  data: { name: string; newPassword: string; oldPassword: string }
+  data: Partial<{ name: string; newPassword: string; oldPassword: string }>
 ) {
   const user = await findUserById(id);
 
-  const parsedData = updateUserSchema.safeParse(data);
+  const parsedData = updateUserSchema.partial().safeParse(data);
   zodErrorFormatter(parsedData);
 
-  const verifyPassword = bcrypt.compareSync(data.oldPassword, user.password!);
-  if (!verifyPassword) {
-    throw new ValidationError("Senha incorreta");
+  if (data.oldPassword && data.newPassword) {
+    const verifyPassword = bcrypt.compareSync(data.oldPassword, user.password!);
+    if (!verifyPassword) {
+      throw new ValidationError("Senha incorreta");
+    }
   }
 
-  const hashedPassword = bcrypt.hashSync(data.newPassword, 10);
+  const updatedData: any = {};
+  if (data.name) updatedData.name = data.name;
+  if (data.newPassword) updatedData.password = bcrypt.hashSync(data.newPassword, 10);
 
-  return updateUser(id, {
-    name: data.name,
-    password: hashedPassword,
-  });
+  return updateUser(id, updatedData);
 }
 
 export async function removeUser(id: string) {
