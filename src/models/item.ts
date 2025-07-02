@@ -30,3 +30,16 @@ export async function deleteItem(id: string) {
     where: { id },
   });
 }
+
+export async function getItemsByListId(listId: string) {
+  return prisma.item.findMany({
+    where: { listId },
+  });
+}
+
+export async function toggleItemComplete(id: string, value?: boolean) {
+  return prisma.item.update({
+    where: { id },
+    data: { completed: value ?? true },
+  });
+}

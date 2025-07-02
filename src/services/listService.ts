@@ -24,7 +24,7 @@ export async function copyList(listId: string, userId: string) {
 
   const newList = await createList({
     userId,
-    name: `${list.name} - Cópia`,
+    name: `Cópia de ${list.name}`,
   });
 
   for (const item of list.items) {
