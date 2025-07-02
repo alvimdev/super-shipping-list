@@ -6,7 +6,7 @@ import { listOutputSchema } from "@/src/schemas/list";
 import { ZodError } from "zod";
 
 export async function POST(
-  request: NextRequest,
+  _request: NextRequest,
   context: { params: { id: string } }
 ) {
   const user = await getAuthenticatedUser();
