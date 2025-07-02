@@ -1,6 +1,9 @@
+import NotFoundError from "@/src/errors/notFoundError";
+import ValidationError from "@/src/errors/validationError";
+
 export function zodErrorFormatter(parsedData: any) {
   if(!parsedData.success) {
-    throw new Error(
+    throw new ValidationError(
       `Campos inválidos:\n- ${parsedData.error.errors
         .map((e: any) => e.message)
         .join("\n- ")}`
@@ -13,6 +16,6 @@ export async function getOrFail<T>(
   notFoundMessage = "Recurso não encontrado"
 ): Promise<T> {
   const result = await fetchFn();
-  if (!result) throw new Error(notFoundMessage);
+  if (!result) throw new NotFoundError(notFoundMessage);
   return result;
 }

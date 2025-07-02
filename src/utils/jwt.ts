@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import AuthError from "@/src/errors/authError";
 
-const JWT_SECRET = process.env.JWT_SECRET || "sua_chave_super_secreta"; // Substituir no .env
+const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key";
 
 type JwtPayload = {
   sub: string; // userId
@@ -18,6 +19,6 @@ export function verifyToken(token: string): JwtPayload {
   try {
     return jwt.verify(token, JWT_SECRET) as JwtPayload;
   } catch (err) {
-    throw new Error("Token inválido");
+    throw new AuthError("Token inválido");
   }
 }

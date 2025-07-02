@@ -8,6 +8,7 @@ import {
 import { registerSchema, updateUserSchema } from "@/src/schemas/user";
 import bcrypt from "bcryptjs";
 import { zodErrorFormatter, getOrFail } from "../utils/validations";
+import ValidationError from "@/src/errors/validationError";
 
 export async function registerUser(data: {
   email: string;
@@ -18,7 +19,7 @@ export async function registerUser(data: {
   zodErrorFormatter(parsedData);
 
   if (await getUserByEmail(data.email)) {
-    throw new Error("Já existe um usuário com este e-mail");
+    throw new ValidationError("Já existe um usuário com este e-mail");
   }
 
   const hashedPassword = bcrypt.hashSync(data.password, 10);
@@ -49,7 +50,7 @@ export async function modifyUser(
 
   const verifyPassword = bcrypt.compareSync(data.oldPassword, user.password!);
   if (!verifyPassword) {
-    throw new Error("Senha incorreta");
+    throw new ValidationError("Senha incorreta");
   }
 
   const hashedPassword = bcrypt.hashSync(data.newPassword, 10);

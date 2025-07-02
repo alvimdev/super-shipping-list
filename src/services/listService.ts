@@ -9,6 +9,7 @@ import { createListSchema, updateListSchema } from "@/src/schemas/list";
 import { zodErrorFormatter, getOrFail } from "@/src/utils/validations";
 import { getUserById } from "@/src/models/user";
 import { createItem } from "@/src/models/item";
+import AuthError from "@/src/errors/authError";
 
 export async function createNewList(userId: string, name: string) {
   const parsedData = createListSchema.safeParse({ name });
@@ -61,7 +62,7 @@ async function verifyListOwnership(listId: string, userId: string) {
   const list = await getOrFail(() => getListById(listId), "Lista não encontrada");
 
   if (list.userId !== userId) {
-    throw new Error("Usuário não tem permissão para acessar esta lista");
+    throw new AuthError("Usuário não tem permissão para acessar esta lista");
   }
 
   return list;

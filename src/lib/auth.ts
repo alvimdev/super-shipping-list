@@ -1,6 +1,8 @@
 import { cookies, headers } from "next/headers";
 import { verifyToken } from "@/src/utils/jwt";
 import { getUserById } from "@/src/models/user";
+import NotFoundError from "@/src/errors/notFoundError";
+import AuthError from "@/src/errors/authError";
 
 export async function getAuthenticatedUser() {
   const cookieStore = await cookies();
@@ -12,20 +14,20 @@ export async function getAuthenticatedUser() {
   const token = cookieToken || authHeader;
 
   if (!token) {
-    throw new Error("Token não encontrado");
+    throw new AuthError("Token não encontrado");
   }
 
   let payload;
   try {
     payload = verifyToken(token);
   } catch {
-    throw new Error("Token inválido");
+    throw new AuthError("Token inválido");
   }
 
   const user = await getUserById(payload.sub);
 
   if (!user) {
-    throw new Error("Usuário não encontrado");
+    throw new NotFoundError("Usuário não encontrado");
   }
 
   return user;
