@@ -1,8 +1,35 @@
 import { findUserByEmail } from "@/src/services/userService";
+import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { generateToken } from "@/src/utils/jwt";
 import AuthError from "@/src/errors/authError";
 
+/**
+ * @swagger
+ * /api/login:
+ *   post:
+ *     tags:
+ *       - auth
+ *     summary: Realiza o login de um usuário
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login realizado com sucesso
+ *       401:
+ *         description: Credenciais inválidas
+ *       500:
+ *         description: Erro interno do servidor
+ */
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
@@ -16,9 +43,18 @@ export async function POST(request: Request) {
 
     const token = generateToken({ sub: user.id, email: user.email });
 
-    return Response.json({ token }, { status: 200 });
+    const response = NextResponse.json({ success: true }, { status: 200 });
+    
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 3, // 3 dias em segundos
+      path: "/",
+      sameSite: "lax",
+    });
+
+    return response;
   } catch (err: Error | any) {
-    const status = err instanceof AuthError ? err.statusCode : 500;
-    return Response.json({ error: err.message }, { status });
+    return Response.json({ error: err.message }, { status: err.statusCode || 500 });
   }
 }

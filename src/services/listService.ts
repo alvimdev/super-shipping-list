@@ -9,7 +9,6 @@ import { createListSchema, updateListSchema } from "@/src/schemas/list";
 import { zodErrorFormatter, getOrFail } from "@/src/utils/validations";
 import { getUserById } from "@/src/models/user";
 import { createItem } from "@/src/models/item";
-import AuthError from "@/src/errors/authError";
 
 export async function createNewList(userId: string, name: string) {
   const parsedData = createListSchema.safeParse({ name });
@@ -21,7 +20,10 @@ export async function createNewList(userId: string, name: string) {
 }
 
 export async function copyList(listId: string, userId: string) {
-  const list = await verifyListOwnership(listId, userId);
+  const list = await getOrFail(
+    () => getListById(listId, userId),
+    "Lista não encontrada"
+  );
 
   const newList = await createList({
     userId,
@@ -29,7 +31,10 @@ export async function copyList(listId: string, userId: string) {
   });
 
   for (const item of list.items) {
-    await createItem(newList.id, { name: item.name, quantity: item.quantity });
+    await createItem(newList.id, {
+      name: item.name,
+      quantity: item.quantity,
+    });
   }
 
   return newList;
@@ -43,7 +48,11 @@ export async function modifyList(
   const parsedData = updateListSchema.partial().safeParse(data);
   zodErrorFormatter(parsedData);
 
-  await getOrFail(() => getUserById(userId), "Usuário não encontrado");
+  // Verifica se lista existe e pertence ao usuário
+  await getOrFail(
+    () => getListById(listId, userId),
+    "Lista não encontrada"
+  );
 
   return updateList(listId, data);
 }
@@ -53,17 +62,10 @@ export async function getUserLists(userId: string) {
 }
 
 export async function removeList(listId: string, userId: string) {
-  await verifyListOwnership(listId, userId);
+  await getOrFail(
+    () => getListById(listId, userId),
+    "Lista não encontrada"
+  );
 
   return deleteList(listId);
-}
-
-async function verifyListOwnership(listId: string, userId: string) {
-  const list = await getOrFail(() => getListById(listId), "Lista não encontrada");
-
-  if (list.userId !== userId) {
-    throw new AuthError("Usuário não tem permissão para acessar esta lista");
-  }
-
-  return list;
 }

@@ -9,12 +9,13 @@ export async function createList(data: {
   });
 }
 
-export async function getListById(id: string) {
-  return prisma.list.findUnique({
-    where: { id },
-    include: {
-      items: true,
+export async function getListById(id: string, userId?: string) {
+  return prisma.list.findFirst({
+    where: {
+      id,
+      ...(userId && { userId }), // se houver userId, verifica também
     },
+    include: { items: true },
   });
 }
 
