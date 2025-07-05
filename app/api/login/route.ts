@@ -35,10 +35,13 @@ export async function POST(request: Request) {
     const { email, password } = await request.json();
 
     const user = await findUserByEmail(email);
+    if (!user) {
+      throw new AuthError("Usuarário não encontrado");
+    }
 
     const valid = bcrypt.compareSync(password, user.password!);
     if (!valid) {
-      throw new AuthError("Credenciais inválidas");
+      throw new AuthError("Senha incorreta");
     }
 
     const token = generateToken({ sub: user.id, email: user.email });

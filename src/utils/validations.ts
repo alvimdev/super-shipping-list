@@ -4,9 +4,9 @@ import ValidationError from "@/src/errors/validationError";
 export function zodErrorFormatter(parsedData: any) {
   if(!parsedData.success) {
     throw new ValidationError(
-      `Campos inválidos:\n- ${parsedData.error.errors
+      `Campos inválidos: ${parsedData.error.errors
         .map((e: any) => e.message)
-        .join("\n- ")}`
+        .join(", ")}`
     );
   }
 }
