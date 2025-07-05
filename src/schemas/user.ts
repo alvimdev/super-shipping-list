@@ -25,7 +25,7 @@ export const updateUserSchema = z.object({
     .regex(/[A-Z]/, "1 letra maiúscula")
     .regex(/[a-z]/, "1 letra minúscula")
     .regex(/[0-9]/, "1 número")
-    .regex(/[!@#$%^&*]/, "1 caractere especial"),
+    .regex(/[!@#$%^&*]/, "1 caractere especial").optional().nullable(),
   oldPassword: z.string().min(6),
 });
 

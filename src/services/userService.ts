@@ -45,14 +45,22 @@ export async function modifyUser(
 ) {
   const user = await findUserById(id);
 
-  const parsedData = updateUserSchema.partial().safeParse(data);
+  const filteredData = {
+    ...data,
+    newPassword: data.newPassword?.trim() || undefined,
+    oldPassword: data.oldPassword?.trim() || undefined,
+  };
+
+  const parsedData = updateUserSchema.partial().safeParse(filteredData);
   zodErrorFormatter(parsedData);
 
-  if (data.oldPassword && data.newPassword) {
+  if (data.oldPassword) {
     const verifyPassword = bcrypt.compareSync(data.oldPassword, user.password!);
     if (!verifyPassword) {
       throw new ValidationError("Senha incorreta");
     }
+  } else {
+    throw new ValidationError("Senha antiga é obrigatória");
   }
 
   const updatedData: any = {};
