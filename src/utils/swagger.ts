@@ -1,26 +1,27 @@
-import { createSwaggerSpec } from "next-swagger-doc";
+import swaggerJSDoc from "swagger-jsdoc";
 
-export const getApiDocs = async () => {
-  const spec = createSwaggerSpec({
-    apiFolder: "app/api",
+export const getApiDocs = () => {
+  const options: swaggerJSDoc.Options = {
     definition: {
       openapi: "3.0.0",
       info: {
         title: "SUPER Shipping List API",
-        version: "1.0",
+        version: "1.0.0",
       },
       components: {
         securitySchemes: {
           BearerAuth: {
             type: "http",
             scheme: "bearer",
-            bearerFormat: "JWT", // Isso ativa o botão "Authorize" no Swagger UI
+            bearerFormat: "JWT",
           },
         },
       },
       security: [],
     },
-  });
+    apis: ["./app/api/**/*.ts"],
+  };
 
-  return spec;
+  const swaggerSpec = swaggerJSDoc(options);
+  return swaggerSpec;
 };
