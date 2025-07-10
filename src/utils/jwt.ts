@@ -17,7 +17,8 @@ export function generateToken(payload: JwtPayload) {
 export function verifyToken(token: string): JwtPayload {
   try {
     return jwt.verify(token, JWT_SECRET) as JwtPayload;
-  } catch (err) {
-    throw new AuthError("Token inválido");
+  } catch (error) {
+    const err = error as jwt.JsonWebTokenError;
+    throw new AuthError("Token inválido: " + err.message);
   }
 }

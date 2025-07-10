@@ -7,7 +7,6 @@ import ErrorModal from "@/src/components/modals/ErrorModal";
 import { List } from "@/src/types/list";
 import ListaCard from "@/src/components/interface/ListaCard";
 import CreateListModal from "@/src/components/modals/CreateListModal";
-import Footer from "../components/interface/Footer";
 
 export default function Listas() {
   const [showCreateListModal, setShowCreateListModal] = useState(false);

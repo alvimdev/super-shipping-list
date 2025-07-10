@@ -28,8 +28,12 @@ export default function Cadastro() {
 
       // Redireciona após sucesso
       router.replace("/listas");
-    } catch (e: any) {
-      setError(e.message || "Erro desconhecido");
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError(e.message);
+      } else {
+        setError("Erro desconhecido");
+      }
     }
   };
 

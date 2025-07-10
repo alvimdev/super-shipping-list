@@ -37,8 +37,12 @@ export default function ListaCard({ list, onDelete, onCopy }: ListaCardProps) {
         onDelete?.(listData.id);
         setShowConfirmModal(null);
       })
-      .catch((err: any) => {
-        setError(err.message);
+      .catch((err: unknown) => {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Erro ao excluir lista.");
+        }
       });
   };
 
@@ -50,8 +54,12 @@ export default function ListaCard({ list, onDelete, onCopy }: ListaCardProps) {
         onCopy?.(newList);
         setShowConfirmModal(null);
       })
-      .catch((err: any) => {
-        setError(err.message);
+      .catch((err: unknown) => {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Erro ao copiar lista.");
+        }
       });
   };
 

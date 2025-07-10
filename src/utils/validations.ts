@@ -1,11 +1,12 @@
+import { z } from "zod";
 import NotFoundError from "@/src/errors/notFoundError";
 import ValidationError from "@/src/errors/validationError";
 
-export function zodErrorFormatter(parsedData: any) {
-  if(!parsedData.success) {
+export function zodErrorFormatter<I, O>(parsedData: z.SafeParseReturnType<I, O>) {
+  if (!parsedData.success) {
     throw new ValidationError(
       `Campos inválidos: ${parsedData.error.errors
-        .map((e: any) => e.message)
+        .map((e: z.ZodIssue) => e.message)
         .join(", ")}`
     );
   }

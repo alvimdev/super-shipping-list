@@ -1,9 +1,7 @@
+import AppError from "@/src/errors/appError";
 import { getAuthenticatedUser } from "@/src/lib/auth";
 import { listOutputSchema } from "@/src/schemas/list";
-import {
-  createNewList,
-  getUserLists
-} from "@/src/services/listService";
+import { createNewList, getUserLists } from "@/src/services/listService";
 
 /**
  * @swagger
@@ -24,8 +22,14 @@ export async function GET() {
     const lists = await getUserLists(user.id);
     const parsedLists = lists.map((list) => listOutputSchema.parse(list));
     return Response.json(parsedLists, { status: 200 });
-  } catch (err: Error | any) {
-    return Response.json({ error: err.message }, { status: err.statusCode || 500 });
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return Response.json({ error: err.message }, { status: err.statusCode });
+    }
+    return Response.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    );
   }
 }
 
@@ -58,7 +62,13 @@ export async function POST(request: Request) {
     const list = await createNewList(user.id, name.trim());
     const parsedList = listOutputSchema.parse(list);
     return Response.json(parsedList, { status: 201 });
-  } catch (err: Error | any) {
-    return Response.json({ error: err.message }, { status: err.statusCode || 500 });
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return Response.json({ error: err.message }, { status: err.statusCode });
+    }
+    return Response.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    );
   }
 }

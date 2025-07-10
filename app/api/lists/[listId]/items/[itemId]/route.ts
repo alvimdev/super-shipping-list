@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/src/lib/auth";
 import { itemOutputSchema } from "@/src/schemas/item";
-import {
-  modifyItem,
-  removeItem,
-} from "@/src/services/itemService";
+import { modifyItem, removeItem } from "@/src/services/itemService";
+import AppError from "@/src/errors/appError";
 
 /**
  * @swagger
@@ -53,10 +51,16 @@ export async function PATCH(
     const item = await modifyItem(itemId, user.id, data);
     const parsedItem = itemOutputSchema.parse(item);
     return NextResponse.json(parsedItem, { status: 200 });
-  } catch (err: Error | any) {
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode }
+      );
+    }
     return NextResponse.json(
-      { error: err.message },
-      { status: err.statusCode || 500 }
+      { error: "Erro interno no servidor" },
+      { status: 500 }
     );
   }
 }
@@ -86,7 +90,7 @@ export async function PATCH(
  *         description: Erro interno do servidor
  */
 export async function DELETE(
-  _request: NextRequest, 
+  _request: NextRequest,
   context: { params: Promise<{ listId: string; itemId: string }> }
 ) {
   try {
@@ -95,10 +99,16 @@ export async function DELETE(
 
     await removeItem(itemId, user.id);
     return NextResponse.json({ sucess: true }, { status: 200 });
-  } catch (err: Error | any) {
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode }
+      );
+    }
     return NextResponse.json(
-      { error: err.message },
-      { status: err.statusCode || 500 }
+      { error: "Erro interno no servidor" },
+      { status: 500 }
     );
   }
 }

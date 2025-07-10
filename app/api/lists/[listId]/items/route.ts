@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/src/lib/auth";
 import { itemOutputSchema } from "@/src/schemas/item";
-import {
-  createNewItem,
-  getItemsFromList,
-} from "@/src/services/itemService";
+import { createNewItem, getItemsFromList } from "@/src/services/itemService";
+import AppError from "@/src/errors/appError";
 
 /**
  * @swagger
@@ -36,10 +34,16 @@ export async function GET(
     const items = await getItemsFromList(listId, user.id);
     const parsedItems = items.map((item) => itemOutputSchema.parse(item));
     return NextResponse.json(parsedItems, { status: 200 });
-  } catch (err: Error | any) {
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode }
+      );
+    }
     return NextResponse.json(
-      { error: err.message },
-      { status: err.statusCode || 500 }
+      { error: "Erro interno no servidor" },
+      { status: 500 }
     );
   }
 }
@@ -86,10 +90,16 @@ export async function POST(
     const item = await createNewItem(listId, user.id, data);
     const parsedItem = itemOutputSchema.parse(item);
     return NextResponse.json(parsedItem, { status: 201 });
-  } catch (err: Error | any) {
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode }
+      );
+    }
     return NextResponse.json(
-      { error: err.message },
-      { status: err.statusCode || 500 }
+      { error: "Erro interno no servidor" },
+      { status: 500 }
     );
   }
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/src/lib/auth";
 import { listOutputSchema, listOutputNameSchema } from "@/src/schemas/list";
 import { findList, modifyList, removeList } from "@/src/services/listService";
+import AppError from "@/src/errors/appError";
 
 /**
  * @swagger
@@ -29,11 +30,20 @@ export async function DELETE(
   try {
     const user = await getAuthenticatedUser();
     const { listId } = await context.params;
-    
+
     await removeList(listId, user.id);
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (err: Error | any) {
-    return NextResponse.json({ error: err.message }, { status: err.statusCode || 500 });
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode }
+      );
+    }
+    return NextResponse.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    );
   }
 }
 
@@ -74,11 +84,22 @@ export async function PATCH(
     const { name } = await request.json();
     const { listId } = await context.params;
 
-    const updatedList = await modifyList(listId, user.id, { name: name.trim() });
+    const updatedList = await modifyList(listId, user.id, {
+      name: name.trim(),
+    });
     const parsedList = listOutputSchema.parse(updatedList);
     return NextResponse.json(parsedList, { status: 200 });
-  } catch (err: Error | any) {
-    return NextResponse.json({ error: err.message }, { status: err.statusCode || 500 });
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode }
+      );
+    }
+    return NextResponse.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    );
   }
 }
 
@@ -112,7 +133,16 @@ export async function GET(
     const list = await findList(listId, user.id);
     const parsedList = listOutputNameSchema.parse(list);
     return NextResponse.json(parsedList, { status: 200 });
-  } catch (err: Error | any) {
-    return NextResponse.json({ error: err.message }, { status: err.statusCode || 500 });
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode }
+      );
+    }
+    return NextResponse.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    );
   }
 }

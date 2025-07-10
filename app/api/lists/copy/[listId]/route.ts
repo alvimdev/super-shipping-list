@@ -3,6 +3,7 @@ import { getAuthenticatedUser } from "@/src/lib/auth";
 import { copyList } from "@/src/services/listService";
 import { listOutputSchema } from "@/src/schemas/list";
 import { ZodError } from "zod";
+import AppError from "@/src/errors/appError";
 
 /**
  * @swagger
@@ -37,14 +38,22 @@ export async function POST(
     const newList = await copyList(listId, user.id);
     const parsedList = listOutputSchema.parse(newList);
     return NextResponse.json(parsedList, { status: 201 });
-  } catch (err: Error | any) {
+  } catch (err: Error | unknown) {
     if (err instanceof ZodError) {
       return NextResponse.json(
         { error: "Erro de validação", issues: err.errors },
         { status: 400 }
       );
     }
-
-    return NextResponse.json({ error: err.message }, { status: err.statusCode || 500 });
+    if (err instanceof AppError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode }
+      );
+    }
+    return NextResponse.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    );
   }
 }

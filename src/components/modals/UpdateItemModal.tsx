@@ -36,8 +36,12 @@ export default function UpdateItemModal({
 
       onUpdate(updated); // atualiza o componente pai
       onClose();
-    } catch (err: any) {
-      setError(err.message || "Erro ao atualizar lista.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Erro ao atualizar item.");
+      }
     }
   };
 

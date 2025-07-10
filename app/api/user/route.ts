@@ -1,3 +1,4 @@
+import AppError from "@/src/errors/appError";
 import { getAuthenticatedUser } from "@/src/lib/auth";
 import { userOutputSchema } from "@/src/schemas/user";
 import {
@@ -6,7 +7,6 @@ import {
   removeUser,
 } from "@/src/services/userService";
 import { generateToken } from "@/src/utils/jwt";
-
 import { NextResponse } from "next/server";
 
 /**
@@ -50,12 +50,27 @@ export async function POST(request: Request) {
       sameSite: "lax" as const,
     };
 
-    response.cookies.set("token", token, { ...baseCookieOptions, httpOnly: true });
-    response.cookies.set("auth_active", "true", { ...baseCookieOptions, httpOnly: false });
+    response.cookies.set("token", token, {
+      ...baseCookieOptions,
+      httpOnly: true,
+    });
+    response.cookies.set("auth_active", "true", {
+      ...baseCookieOptions,
+      httpOnly: false,
+    });
 
     return response;
-  } catch (err: Error | any) {
-    return NextResponse.json({ error: err.message }, { status: 400 });
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode }
+      );
+    }
+    return NextResponse.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    );
   }
 }
 

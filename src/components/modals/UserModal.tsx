@@ -39,7 +39,7 @@ export default function UserModal({ onClose }: UserModalProps) {
     });
 
     return () => document.removeEventListener("keydown", handleEsc);
-  }, [onClose]);
+  }, [onClose, userData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
@@ -70,7 +70,7 @@ export default function UserModal({ onClose }: UserModalProps) {
           newPassword: userData["new-password"],
         }),
       })
-        .then((data) => {
+        .then(() => {
           setEditing(false);
         })
         .catch((err) => {

@@ -7,7 +7,6 @@ import Header from "@/src/components/interface/Header";
 import ErrorModal from "@/src/components/modals/ErrorModal";
 import CreateItemModal from "@/src/components/modals/CreateItemModal";
 import ItemCard from "../components/interface/ItemCard";
-import Footer from "../components/interface/Footer";
 
 type ItensProps = {
   listId: string;
@@ -26,8 +25,12 @@ export default function Itens({ listId, listName }: ItensProps) {
           console.log("Itens recebidos:", data);
           setItens(data);
         })
-        .catch((err: any) => {
-          setError(err.message);
+        .catch((err: unknown) => {
+          if (err instanceof Error) {
+            setError(err.message);
+          } else {
+            setError("Erro ao carregar itens.");
+          }
           setItens([]);
         });
     };

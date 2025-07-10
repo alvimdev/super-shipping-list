@@ -1,4 +1,4 @@
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 import Itens from "@/src/views/Itens";
 import { Metadata } from "next";
 import { fetchWrapper } from "@/src/helpers/FetchHelper";

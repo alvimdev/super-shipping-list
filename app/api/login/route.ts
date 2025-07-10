@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { generateToken } from "@/src/utils/jwt";
 import AuthError from "@/src/errors/authError";
+import AppError from "@/src/errors/appError";
+import NotFoundError from "@/src/errors/notFoundError";
 
 /**
  * @swagger
@@ -36,7 +38,7 @@ export async function POST(request: Request) {
 
     const user = await findUserByEmail(email);
     if (!user) {
-      throw new AuthError("Usuarário não encontrado");
+      throw new NotFoundError("Usuarário não encontrado");
     }
 
     const valid = bcrypt.compareSync(password, user.password!);
@@ -55,11 +57,26 @@ export async function POST(request: Request) {
       sameSite: "lax" as const,
     };
 
-    response.cookies.set("token", token, { ...baseCookieOptions, httpOnly: true });
-    response.cookies.set("auth_active", "true", { ...baseCookieOptions, httpOnly: false });
+    response.cookies.set("token", token, {
+      ...baseCookieOptions,
+      httpOnly: true,
+    });
+    response.cookies.set("auth_active", "true", {
+      ...baseCookieOptions,
+      httpOnly: false,
+    });
 
     return response;
-  } catch (err: Error | any) {
-    return Response.json({ error: err.message }, { status: err.statusCode || 500 });
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode }
+      );
+    }
+    return NextResponse.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    );
   }
 }
