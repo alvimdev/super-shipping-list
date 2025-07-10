@@ -13,9 +13,18 @@ export async function getListById(id: string, userId?: string) {
   return prisma.list.findFirst({
     where: {
       id,
-      ...(userId && { userId }), // se houver userId, verifica também
+      ...(userId && { userId }),
     },
     include: { items: true },
+  });
+}
+
+export async function getListDetails(id: string, userId?: string) {
+  return prisma.list.findFirst({
+    where: {
+      id,
+      ...(userId && { userId }),
+    },
   });
 }
 
@@ -23,9 +32,6 @@ export async function getListsByUserId(userId: string) {
   return prisma.list.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
-    include: {
-      items: true,
-    },
   });
 }
 

@@ -19,6 +19,11 @@ export const listOutputSchema = z.object({
   ),
 });
 
+export const listOutputNameSchema = listOutputSchema.pick({
+  id: true,
+  name: true,
+});
+
 export type CreateListInput = z.infer<typeof createListSchema>;
 
 export type UpdateListInput = z.infer<typeof updateListSchema>;

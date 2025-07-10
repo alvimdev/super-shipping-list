@@ -55,7 +55,7 @@ export async function POST(request: Request) {
   try {
     const user = await getAuthenticatedUser();
     const { name } = await request.json();
-    const list = await createNewList(name.trim(), user.id);
+    const list = await createNewList(user.id, name.trim());
     const parsedList = listOutputSchema.parse(list);
     return Response.json(parsedList, { status: 201 });
   } catch (err: Error | any) {

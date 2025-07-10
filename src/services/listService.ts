@@ -3,7 +3,8 @@ import {
   updateList,
   getListById,
   getListsByUserId,
-  deleteList
+  deleteList,
+  getListDetails
 } from "@/src/models/list";
 import { createListSchema, updateListSchema } from "@/src/schemas/list";
 import { zodErrorFormatter, getOrFail } from "@/src/utils/validations";
@@ -16,7 +17,7 @@ export async function createNewList(userId: string, name: string) {
 
   await getOrFail(() => getUserById(userId), "Usuário não encontrado");
 
-  return createList({ userId, name });
+  return createList({ name, userId });
 }
 
 export async function copyList(listId: string, userId: string) {
@@ -68,4 +69,11 @@ export async function removeList(listId: string, userId: string) {
   );
 
   return deleteList(listId);
+}
+
+export async function findList(listId: string, userId?: string) {
+  return getOrFail(
+    () => getListDetails(listId, userId),
+    "Lista não encontrada"
+  );
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/src/lib/auth";
-import { listOutputSchema } from "@/src/schemas/list";
-import { modifyList, removeList } from "@/src/services/listService";
+import { listOutputSchema, listOutputNameSchema } from "@/src/schemas/list";
+import { findList, modifyList, removeList } from "@/src/services/listService";
 
 /**
  * @swagger
@@ -76,6 +76,41 @@ export async function PATCH(
 
     const updatedList = await modifyList(listId, user.id, { name: name.trim() });
     const parsedList = listOutputSchema.parse(updatedList);
+    return NextResponse.json(parsedList, { status: 200 });
+  } catch (err: Error | any) {
+    return NextResponse.json({ error: err.message }, { status: err.statusCode || 500 });
+  }
+}
+
+/**
+ * @swagger
+ * /api/lists/{listId}:
+ *   get:
+ *     tags:
+ *       - lists
+ *     summary: Retorna uma lista específica
+ *     parameters:
+ *       - name: listId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lista retornada com sucesso
+ *       500:
+ *         description: Erro interno do servidor
+ */
+export async function GET(
+  _request: NextRequest,
+  context: { params: Promise<{ listId: string }> }
+) {
+  try {
+    const user = await getAuthenticatedUser();
+    const { listId } = await context.params;
+
+    const list = await findList(listId, user.id);
+    const parsedList = listOutputNameSchema.parse(list);
     return NextResponse.json(parsedList, { status: 200 });
   } catch (err: Error | any) {
     return NextResponse.json({ error: err.message }, { status: err.statusCode || 500 });
