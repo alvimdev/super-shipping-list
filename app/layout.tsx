@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SUPER Shipping List",
+  title: "SUPER Shopping List",
   description: "A simple and powerful shopping list app",
 };
 

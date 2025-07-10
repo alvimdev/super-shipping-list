@@ -1,4 +1,4 @@
-# 🛒 SUPER Shipping List
+# 🛒 SUPER Shopping List
 
 Uma aplicação full stack para gerenciamento de listas de compras. O sistema permite que usuários criem contas, gerenciem suas listas e itens de maneira simples, segura e organizada.  
 
@@ -28,8 +28,8 @@ Uma aplicação full stack para gerenciamento de listas de compras. O sistema pe
 
 ### 1. Clone o repositório
 ```bash
-git clone https://github.com/alvimdev/super-shipping-list.git
-cd super-shipping-list
+git clone https://github.com/alvimdev/super-shopping-list.git
+cd super-shopping-list
 ````
 
 ### 2. Instale as dependências
@@ -45,7 +45,7 @@ Crie os arquivos `.env`, `.env` e `.env`:
 **Exemplo:**
 
 ```env
-DATABASE_URL=postgresql://usuario:senha@localhost:5432/super_shipping_list
+DATABASE_URL=postgresql://usuario:senha@localhost:5432/super_shopping_list
 JWT_SECRET=uma-chave-bem-segura
 NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
 NODE_ENV=development

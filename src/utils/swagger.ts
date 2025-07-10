@@ -5,7 +5,7 @@ export const getApiDocs = () => {
     definition: {
       openapi: "3.0.0",
       info: {
-        title: "SUPER Shipping List API",
+        title: "SUPER Shopping List API",
         version: "1.0.0",
       },
       components: {
