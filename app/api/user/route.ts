@@ -92,8 +92,17 @@ export async function GET() {
     const user = await getAuthenticatedUser();
     const parsedUser = userOutputSchema.parse(user);
     return Response.json(parsedUser, { status: 200 });
-  } catch (err: Error | any) {
-    return Response.json({ error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode }
+      );
+    }
+    return NextResponse.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    );
   }
 }
 
@@ -130,8 +139,17 @@ export async function PATCH(request: Request) {
     const updatedUser = await modifyUser(user.id, data);
     const parsedUser = userOutputSchema.parse(updatedUser);
     return Response.json(parsedUser, { status: 200 });
-  } catch (err: Error | any) {
-    return Response.json({ error: err.message }, { status: 400 });
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode }
+      );
+    }
+    return NextResponse.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    );
   }
 }
 
@@ -153,7 +171,16 @@ export async function DELETE() {
     const user = await getAuthenticatedUser();
     await removeUser(user.id);
     return Response.json({ success: true }, { status: 200 });
-  } catch (err: Error | any) {
-    return Response.json({ error: err.message }, { status: 400 });
+  } catch (err: unknown) {
+    if (err instanceof AppError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode }
+      );
+    }
+    return NextResponse.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    );
   }
 }

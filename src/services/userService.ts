@@ -5,7 +5,7 @@ import {
   updateUser,
   deleteUser,
 } from "@/src/models/user";
-import { registerSchema, updateUserSchema } from "@/src/schemas/user";
+import { registerSchema, SimpleUserSchema, updateUserSchema } from "@/src/schemas/user";
 import bcrypt from "bcryptjs";
 import { zodErrorFormatter, getOrFail } from "../utils/validations";
 import ValidationError from "@/src/errors/validationError";
@@ -63,7 +63,7 @@ export async function modifyUser(
     throw new ValidationError("Senha antiga é obrigatória");
   }
 
-  const updatedData: any = {};
+  const updatedData: SimpleUserSchema = { name: "", password: ""};
   if (data.name) updatedData.name = data.name;
   if (data.newPassword) updatedData.password = bcrypt.hashSync(data.newPassword, 10);
 

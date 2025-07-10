@@ -34,8 +34,16 @@ export const userOutputSchema = z.object({
   name: z.string().min(2)
 });
 
+export const simpleUserSchema = z.object({
+  name: z.string().min(2),
+  password: z.string().min(6),
+});
+
+
 export type LoginInput = z.infer<typeof loginSchema>;
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
+
+export type SimpleUserSchema = z.infer<typeof simpleUserSchema>;

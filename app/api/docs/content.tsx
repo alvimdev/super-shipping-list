@@ -15,7 +15,7 @@ export default function PageContent({ spec }: { spec: object }) {
       domNode: swaggerRef.current,
       spec,
     });
-  }, []);
+  }, [spec]);
 
   return <div className="swagger-ui-wrapper" ref={swaggerRef} />;
 }
