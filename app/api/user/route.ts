@@ -43,13 +43,15 @@ export async function POST(request: Request) {
 
     const response = NextResponse.json({ success: true }, { status: 201 });
 
-    response.cookies.set("token", token, {
-      httpOnly: true,
+    const baseCookieOptions = {
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 3, // 3 dias em segundos
       path: "/",
-      sameSite: "lax",
-    });
+      sameSite: "lax" as const,
+    };
+
+    response.cookies.set("token", token, { ...baseCookieOptions, httpOnly: true });
+    response.cookies.set("auth_active", "true", { ...baseCookieOptions, httpOnly: false });
 
     return response;
   } catch (err: Error | any) {

@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import PasswordInput from "@/src/components/inputs/PasswordInput";
 import ErrorModal from "@/src/components/modals/ErrorModal";
 import Link from "next/link";
+import { fetchWrapper } from "@/src/helpers/FetchHelper";
 
 export default function Cadastro() {
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -18,14 +20,13 @@ export default function Cadastro() {
     const password = formData.get("password") as string;
 
     try {
-      await fetch("/api/user", {
+      await fetchWrapper("/api/user", {
         method: "POST",
         body: JSON.stringify({ name, email, password }),
         headers: { "Content-Type": "application/json" },
       });
 
       // Redireciona após sucesso
-      const router = useRouter();
       router.replace("/listas");
     } catch (e: any) {
       setError(e.message || "Erro desconhecido");

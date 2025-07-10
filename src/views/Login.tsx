@@ -9,6 +9,7 @@ import Link from "next/link";
 
 export default function Login() {
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -26,7 +27,6 @@ export default function Login() {
       });
 
       // Redireciona após sucesso
-      const router = useRouter();
       router.replace("/listas");
     } catch (e: any) {
       setError(e.message || "Erro desconhecido");

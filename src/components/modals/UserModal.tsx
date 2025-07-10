@@ -22,8 +22,8 @@ export default function UserModal({ onClose }: UserModalProps) {
     password: "",
     "new-password": "",
   });
-  const [loading, setLoading] = useState(true);
   const fetched = useRef(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -34,14 +34,9 @@ export default function UserModal({ onClose }: UserModalProps) {
 
     if (fetched.current) return;
     fetched.current = true;
-    fetchWrapper("/api/user")
-      .then((data) => {
-        setUserData({ ...userData, name: data.name, email: data.email });
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+    fetchWrapper("/api/user").then((data) => {
+      setUserData({ ...userData, name: data.name, email: data.email });
+    });
 
     return () => document.removeEventListener("keydown", handleEsc);
   }, [onClose]);
@@ -56,7 +51,6 @@ export default function UserModal({ onClose }: UserModalProps) {
     })
       .then(() => {
         setShowConfirmModal(false);
-        const router = useRouter();
         router.replace("/");
       })
       .catch((err) => {
@@ -120,108 +114,80 @@ export default function UserModal({ onClose }: UserModalProps) {
               Painel de Usuário
             </h2>
 
-            {loading ? (
-              <div className="flex items-center justify-center m-auto">
-                <span
-                  className="inline-block w-[3px] h-5 bg-black/50 rounded-[10px]"
-                  style={{
-                    animation: "scale-up4 1s linear infinite",
-                  }}
-                />
-                <span
-                  className="inline-block w-[3px] h-[35px] bg-black/50 rounded-[10px] mx-[5px]"
-                  style={{
-                    animation: "scale-up4 1s linear infinite",
-                    animationDelay: "0.25s",
-                  }}
-                />
-                <span
-                  className="inline-block w-[3px] h-5 bg-black/50 rounded-[10px]"
-                  style={{
-                    animation: "scale-up4 1s linear infinite",
-                    animationDelay: "0.5s",
-                  }}
+            <form
+              className="space-y-4 text-left"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleEditToggle();
+              }}
+            >
+              <div>
+                <label htmlFor="name" className="block text-sm text-gray-600">
+                  Nome
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  disabled={!editing}
+                  value={userData.name}
+                  onChange={handleChange}
+                  className="w-full rounded-md py-2.5 px-4 border text-sm outline-[var(--primary)] disabled:cursor-not-allowed text-gray-600 border-gray-300 placeholder-gray-400"
                 />
               </div>
-            ) : (
-              <form
-                className="space-y-4 text-left"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleEditToggle();
-                }}
-              >
-                <div>
-                  <label htmlFor="name" className="block text-sm text-gray-600">
-                    Nome
-                  </label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    disabled={!editing}
-                    value={userData.name}
-                    onChange={handleChange}
-                    className="w-full rounded-md py-2.5 px-4 border text-sm outline-[var(--primary)] disabled:cursor-not-allowed text-gray-600 border-gray-300 placeholder-gray-400"
-                  />
-                </div>
 
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm text-gray-600"
-                  >
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    disabled
-                    value={userData.email}
-                    onChange={handleChange}
-                    className="w-full rounded-md py-2.5 px-4 border text-sm outline-[var(--primary)] disabled:cursor-not-allowed text-gray-600 border-gray-300 placeholder-gray-400"
-                  />
-                </div>
+              <div>
+                <label htmlFor="email" className="block text-sm text-gray-600">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  disabled
+                  value={userData.email}
+                  onChange={handleChange}
+                  className="w-full rounded-md py-2.5 px-4 border text-sm outline-[var(--primary)] disabled:cursor-not-allowed text-gray-600 border-gray-300 placeholder-gray-400"
+                />
+              </div>
 
-                <div>
-                  <PasswordInput
-                    id="new-password"
-                    name="new-password"
-                    placeholder="Nova Senha"
-                    disabled={!editing}
-                    onChange={handleChange}
-                    required={false}
-                  />
-                </div>
+              <div>
+                <PasswordInput
+                  id="new-password"
+                  name="new-password"
+                  placeholder="Nova Senha"
+                  disabled={!editing}
+                  onChange={handleChange}
+                  required={false}
+                />
+              </div>
 
-                <div>
-                  <PasswordInput
-                    id="password"
-                    name="password"
-                    placeholder="Senha Atual"
-                    disabled={!editing}
-                    onChange={handleChange}
-                  />
-                </div>
+              <div>
+                <PasswordInput
+                  id="password"
+                  name="password"
+                  placeholder="Senha Atual"
+                  disabled={!editing}
+                  onChange={handleChange}
+                />
+              </div>
 
-                <div className="pt-2 flex justify-between">
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmModal(true)}
-                    className="inline-flex px-4 py-2 rounded-md bg-red-600 text-white font-semibold text-sm hover:bg-red-700 transition"
-                  >
-                    Deletar
-                  </button>
-                  <button
-                    type="submit"
-                    className="inline-flex px-4 py-2 rounded-md bg-[var(--primary)] text-white font-semibold text-sm hover:bg-[var(--primary-hover)] transition"
-                  >
-                    {editing ? "Salvar" : "Editar"}
-                  </button>
-                </div>
-              </form>
-            )}
+              <div className="pt-2 flex justify-between">
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmModal(true)}
+                  className="inline-flex px-4 py-2 rounded-md bg-red-600 text-white font-semibold text-sm hover:bg-red-700 transition"
+                >
+                  Deletar
+                </button>
+                <button
+                  type="submit"
+                  className="inline-flex px-4 py-2 rounded-md bg-[var(--primary)] text-white font-semibold text-sm hover:bg-[var(--primary-hover)] transition"
+                >
+                  {editing ? "Salvar" : "Editar"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </article>
