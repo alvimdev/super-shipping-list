@@ -16,11 +16,11 @@ Uma aplicação full stack para gerenciamento de listas de compras. O sistema pe
 - Middleware de proteção para rotas privadas
 - Estrutura de serviços e validações modularizada
 
-### 🌐 Frontend (em construção)
-- [ ] Cadastro e login de usuário
-- [ ] Dashboard com todas as listas
-- [ ] Página de edição de listas e seus itens
-- [ ] Interface interativa com Tailwind CSS
+### 🌐 Frontend
+- Cadastro e login de usuário
+- Dashboard com todas as listas
+- Página de edição de listas e seus itens
+- Interface interativa com Tailwind CSS
 
 ---
 
@@ -124,7 +124,7 @@ GET http://localhost:3000/api/docs
 * [x] CRUD para listas e itens
 * [x] Testes de API com Postman / SQL CLient
 * [x] Documentação Swagger
-* [ ] Implementar frontend com React + Tailwind
+* [x] Implementar frontend com React + Tailwind
 * [ ] Testes automatizados
 
 ---
