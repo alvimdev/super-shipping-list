@@ -12,6 +12,7 @@ export const updateItemSchema = z.object({
 
 export const itemOutputSchema = z.object({
   id: z.string(),
+  listId: z.string(),
   name: z.string(),
   quantity: z.number(),
   completed: z.boolean(),
