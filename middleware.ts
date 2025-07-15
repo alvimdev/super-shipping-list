@@ -19,7 +19,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const accessIsAllowed = request.cookies.get("auth_active")?.value === "true";
+  const accessIsAllowed = request.cookies.get("auth_active")?.value?.trim() === "true";
 
   if (!accessIsAllowed) {
     if (!isApiRoute) {
