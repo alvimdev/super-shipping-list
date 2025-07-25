@@ -6,7 +6,7 @@ import type { NextRequest } from "next/server";
 const PUBLIC_ROUTES = ["/", "/login", "/cadastro"];
 
 // Rotas públicas de API que não exigem token
-const PUBLIC_API_ROUTES = ["/api/user", "/api/login", "/api/docs"];
+const PUBLIC_API_ROUTES = ["/api/user", "/api/login", "/api/docs", "/api/ping"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
